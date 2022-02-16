@@ -2,20 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
-class HomeWidget extends StatefulWidget {
-  const HomeWidget({Key? key}) : super(key: key);
+class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
 
   @override
-  State<HomeWidget> createState() => _HomeWidgetState();
+  State<Home> createState() => _HomeState();
 }
 
-class _HomeWidgetState extends State<HomeWidget> {
+class _HomeState extends State<Home> {
   List<Map<String, String>> datas = [];
-  late int _currentPageIndex;
+  late String _currentLocation;
+  final Map<String, String> locationTypeToString = {
+    "성내동": "성내동",
+    "천호동": "천호동",
+    "길동": "길동",
+    "둔촌동": "둔촌동",
+  };
   @override
   void initState() {
     super.initState();
-    _currentPageIndex = 0;
+    _currentLocation = "성내동";
     datas = [
       {
         "image": "assets/images/ara-1.jpg",
@@ -178,8 +184,34 @@ class _HomeWidgetState extends State<HomeWidget> {
       elevation: 1,
       title: GestureDetector(
         onTap: () {},
-        child: Row(
-          children: const [Text("성내동"), Icon(Icons.arrow_drop_down)],
+        child: PopupMenuButton<String>(
+          offset: const Offset(0, 20),
+          shape: ShapeBorder.lerp(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              10),
+          onSelected: (String where) {
+            setState(() {
+              _currentLocation = where;
+            });
+          },
+          itemBuilder: (BuildContext context) {
+            return [
+              const PopupMenuItem(
+                child: Text('둔촌동'),
+                value: "둔촌동",
+              ),
+              const PopupMenuItem(child: Text('길동'), value: "길동"),
+              const PopupMenuItem(child: Text('천호동'), value: "천호동"),
+              const PopupMenuItem(child: Text('성내동'), value: "성내동"),
+            ];
+          },
+          child: Row(
+            children: [
+              Text(locationTypeToString[_currentLocation] as String),
+              const Icon(Icons.arrow_drop_down)
+            ],
+          ),
         ),
       ),
       actions: [
@@ -195,43 +227,11 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  BottomNavigationBarItem _bottomNavigationBarItem(
-      String iconName, String label) {
-    return BottomNavigationBarItem(
-        icon: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          child: SvgPicture.asset("assets/svg/$iconName.svg", width: 22),
-        ),
-        label: label);
-  }
-
-  Widget _bottomWidget() {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      onTap: (int index) {
-        setState(() {
-          _currentPageIndex = index;
-        });
-      },
-      selectedFontSize: 12,
-      selectedItemColor: Colors.black,
-      currentIndex: _currentPageIndex,
-      items: [
-        _bottomNavigationBarItem("home_off", "홈"),
-        _bottomNavigationBarItem("notes_off", "동네생활"),
-        _bottomNavigationBarItem("location_off", "내 근처"),
-        _bottomNavigationBarItem("chat_off", "채팅"),
-        _bottomNavigationBarItem("user_off", "나의 당근"),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appbarWidget(),
       body: _bodyWidget(),
-      bottomNavigationBar: _bottomWidget(),
     );
   }
 }
