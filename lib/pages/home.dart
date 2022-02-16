@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({Key? key}) : super(key: key);
@@ -10,9 +11,11 @@ class HomeWidget extends StatefulWidget {
 
 class _HomeWidgetState extends State<HomeWidget> {
   List<Map<String, String>> datas = [];
+  late int _currentPageIndex;
   @override
   void initState() {
     super.initState();
+    _currentPageIndex = 0;
     datas = [
       {
         "image": "assets/images/ara-1.jpg",
@@ -87,6 +90,11 @@ class _HomeWidgetState extends State<HomeWidget> {
     ];
   }
 
+  final oCcy = NumberFormat("#,###", "ko_KR");
+  String calcStringToWon(String priceString) {
+    return "${oCcy.format(int.parse(priceString))}원";
+  }
+
   Widget _bodyWidget() {
     return ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -104,14 +112,33 @@ class _HomeWidgetState extends State<HomeWidget> {
                   ),
                 ),
                 Expanded(
-                  child: SizedBox(
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 20),
                     height: 100,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(datas[index]['title']!),
-                        Text(datas[index]['location']!),
-                        Text(datas[index]['price']!),
+                        Text(
+                          datas[index]['title']!,
+                          style: const TextStyle(
+                              fontSize: 15, overflow: TextOverflow.ellipsis),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          datas[index]['location']!,
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black.withOpacity(0.3)),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          calcStringToWon(datas[index]['price']!),
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
                         Expanded(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -168,11 +195,43 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
+  BottomNavigationBarItem _bottomNavigationBarItem(
+      String iconName, String label) {
+    return BottomNavigationBarItem(
+        icon: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: SvgPicture.asset("assets/svg/$iconName.svg", width: 22),
+        ),
+        label: label);
+  }
+
+  Widget _bottomWidget() {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      onTap: (int index) {
+        setState(() {
+          _currentPageIndex = index;
+        });
+      },
+      selectedFontSize: 12,
+      selectedItemColor: Colors.black,
+      currentIndex: _currentPageIndex,
+      items: [
+        _bottomNavigationBarItem("home_off", "홈"),
+        _bottomNavigationBarItem("notes_off", "동네생활"),
+        _bottomNavigationBarItem("location_off", "내 근처"),
+        _bottomNavigationBarItem("chat_off", "채팅"),
+        _bottomNavigationBarItem("user_off", "나의 당근"),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appbarWidget(),
       body: _bodyWidget(),
+      bottomNavigationBar: _bottomWidget(),
     );
   }
 }
