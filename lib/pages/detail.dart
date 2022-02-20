@@ -1,9 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carrot_market_sample/components/manor_temperature_widget.dart';
 import 'package:flutter/material.dart';
 
 class DetailContentView extends StatefulWidget {
-  Map<String, String> data;
-  DetailContentView({Key? key, required this.data}) : super(key: key);
+  final Map<String, String> data;
+  const DetailContentView({Key? key, required this.data}) : super(key: key);
 
   @override
   _DetailContentViewState createState() => _DetailContentViewState();
@@ -57,7 +58,7 @@ class _DetailContentViewState extends State<DetailContentView> {
     );
   }
 
-  Widget _bodyWidget() {
+  Widget _makeSliderImage() {
     return Stack(
       children: [
         Hero(
@@ -106,6 +107,40 @@ class _DetailContentViewState extends State<DetailContentView> {
           ),
         )
       ],
+    );
+  }
+
+  Widget _sellerSimpleInfo() {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 25,
+            backgroundImage: Image.asset('assets/images/user.png').image,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text('김준엽',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(
+                '강동구 성내동',
+              ),
+            ],
+          ),
+          Expanded(child: ManorTemperature(manorTemp: 37.5))
+        ],
+      ),
+    );
+  }
+
+  Widget _bodyWidget() {
+    return Column(
+      children: [_makeSliderImage(), _sellerSimpleInfo()],
     );
   }
 
