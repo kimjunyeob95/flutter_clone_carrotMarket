@@ -78,7 +78,7 @@ class ManorTemperature extends StatelessWidget {
               margin: const EdgeInsets.only(left: 7),
               width: 30,
               height: 30,
-              child: Image.asset("assets/images/level-${level}.jpg"),
+              child: Image.asset("assets/images/level-$level.jpg"),
             )
           ],
         ),
